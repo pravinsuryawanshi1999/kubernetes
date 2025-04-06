@@ -22,10 +22,10 @@ pipeline {
                 script{
                     echo "calling the scale down the script"
                     try{
-                       /*sh """
-                        chmod +x /path to script/script.sh
-                        sh /path to script/script.sh
-                        """ */
+                       sh """
+                        chmod +x Scripts/scaledown.sh
+                        sh Scripts/scaledown.sh
+                        """ 
                         echo "scale up script executed successfully"
                     } catch (Exception e)
                     {
