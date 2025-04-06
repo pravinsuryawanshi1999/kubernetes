@@ -24,7 +24,7 @@ pipeline {
                     try{
                        sh """
                         chmod +x Scripts/scaledown.sh
-                        sh Scripts/scaledown.sh
+                        sh Scripts/scaledown.sh ${params.deployment_name}
                         """ 
                         echo "scale up script executed successfully"
                     } catch (Exception e)
