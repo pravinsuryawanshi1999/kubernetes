@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+    parameters{
+        choice(name: 'envname', choices: ['dev', 'stagging', 'prod'], description: 'select the env')
+        string(name: 'namespace', defaultValue: 'default', description: 'select the namespace')
+        choice(name: 'deployment_name', choices: ['nginx-deployment', 'my-app'], description: 'select the deployment')
+    }
+    stages {
+        stage('Confirm') {
+            steps {
+                script{
+                    echo "Deployment name: ${params.deployment_name}"
+                    echo "env_name: ${params.envname}"
+                    echo "namespace_name: ${params.namespace}"
+                    input message: "Do you want to proceed with deployment scaling down?"
+                }
+            }
+        }
+               
+        stage('scale down the deployment') {
+            steps {
+                script{
+                    echo "calling the scale down the script"
+                    try{
+                       /*sh """
+                        chmod +x /path to script/script.sh
+                        sh /path to script/script.sh
+                        """ */
+                        echo "scale up script executed successfully"
+                    } catch (Exception e)
+                    {
+                        error("scale up the script failed:${e.getMessage()}")
+                    }
+
+                }            
+            }
+        }
+    }
+    
+    post{
+        success{
+            echo "pipeline completed successfully. Sending the notification"
+            //mail bcc: '', body: '"Scaling down replicas for deployment ${params.deployment_name} was successful."', cc: '', from: '', replyTo: '', subject: 'pipeline success: ${ params.deployment_name}', to: 'pravisuryawanshi1999@gmail.com'
+            
+        }
+    
+    
+        failure{
+            echo "pipeline failed. Sending the notification"
+            //mail bcc: '', body: '"Scaling down replicas for deployment ${params.deployment_name} was successful."', cc: '', from: '', replyTo: '', subject: 'pipeline failed: ${ params.deployment_name}', to: 'pravisuryawanshi1999@gmail.com'
+            
+        }
+    }
+  
+
+}
+
