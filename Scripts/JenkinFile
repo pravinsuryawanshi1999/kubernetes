@@ -23,6 +23,7 @@ pipeline {
                     echo "calling the scale down the script"
                     try{
                        sh """
+                        export PATH=/opt/homebrew/bin:\$PATH
                         chmod +x Scripts/scaledown.sh
                         sh Scripts/scaledown.sh ${params.deployment_name}
                         """ 
