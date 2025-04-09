@@ -25,7 +25,7 @@ pipeline {
                             sh """
                             export PATH=/opt/homebrew/bin:\$PATH
                             chmod +x Scripts/scaleupmax.sh
-                            sh Scripts/scaleup.sh ${params.deployment_name}
+                            sh Scripts/scaleupmax.sh ${params.deployment_name}
                             """
                             echo "Script execution successful..."
                         } catch (Exception e) {
