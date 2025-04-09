@@ -1,0 +1,64 @@
+pipeline {
+    agent any
+    parameters{
+        string(name: 'env_name', defaultValue: 'stagging', description: 'this pipeline will execute on stagging')
+        string(name: 'namespace', defaultValue: 'default', description: 'select the namespace')
+        choice(name: 'deployment_name:' , choices: ['nginx-deployment', 'my-app'] , description: 'select the deployment')
+    }
+    stages {
+        stage('Confirm') {
+            steps {
+                script{
+                  echo "Deployment name:${params.deployment_name}"
+                  echo "env_name:${params.env_name}"
+                  echo "namespace:${namespace}"
+                  input message: "Do you want to proceed want to with the scale up deployment?"                    
+                }
+
+            }
+        }
+        stage('Scale up the deployment') {
+            steps {
+                script{
+                    echo "calling the scale up deployment script ...."
+                    try{
+                        sh """
+                        export PATH=/opt/homebrew/bin:\$PATH
+                        chmod +x Scripts/scaleup.sh
+                        sh Scripts/scaleup.sh ${params.deployment_name}
+                        """
+                        echo "script execution successfull..."
+                    }catch(Exception e)
+                    {
+                        error("scale up the script failed:${e.getMessage()}")                        
+                    }
+                                      
+                }
+
+            }
+        }
+    }
+    post{
+        success{
+          echo "Pipeline completed successfully. Sending the notification"
+          mail bcc: '', 
+              body: "Scaling down replicas for deployment ${params.deployment_name} was successful.", 
+              cc: '', 
+              from: '', 
+              replyTo: '', 
+              subject: "Pipeline success: ${params.deployment_name}", 
+              to: 'pravisuryawanshi1999@gmail.com'            
+        }
+        failure{
+          echo "Pipeline completed successfully. Sending the notification"
+          mail bcc: '', 
+              body: "Scaling down replicas for deployment ${params.deployment_name} was failed.", 
+              cc: '', 
+              from: '', 
+              replyTo: '', 
+              subject: "Pipeline success: ${params.deployment_name}", 
+              to: 'pravisuryawanshi1999@gmail.com'                     
+        }
+    }
+}
+
