@@ -11,7 +11,7 @@ fi
 
 for ms in $ms_name; do 
     echo "scaling up the microservice to base_replica"
-    base_replica=`cat replica_base.txt | grep ${ms} |cut -d ' ' -f2`
+    base_replica=`cat Scripts/replica_base.txt | grep ${ms} |cut -d ' ' -f2`
     kubectl scale --replicas=${base_replica} deployment/${ms} 
     if [[ $? -gt 0 ]] ; then
        echo "failed to set replicas to service ${ms}"
