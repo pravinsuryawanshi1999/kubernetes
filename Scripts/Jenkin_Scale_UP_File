@@ -3,7 +3,7 @@ pipeline {
     parameters {
         string(name: 'env_name', defaultValue: 'stagging', description: 'this pipeline will execute on stagging')
         string(name: 'namespace', defaultValue: 'default', description: 'select the namespace')
-        choice(name: 'deployment_name:' , choices: ['nginx-deployment', 'my-app'], description: 'select the deployment')
+        choice(name: 'deployment_name' , choices: ['nginx-deployment', 'my-app'], description: 'select the deployment')
     }
     stages {
         stage('Confirm') {
