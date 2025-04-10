@@ -31,8 +31,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Correct Docker build command
-                    sh "/usr/local/bin/docker build Dockerfile -t ${DOCKER_IMAGE}:${VERSION} ."
+                    
+                    sh "/usr/local/bin/docker docker build Dockerfile -t ${DOCKER_IMAGE}:${VERSION} ."
                 }
             }
         }
