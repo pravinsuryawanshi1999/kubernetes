@@ -31,7 +31,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "/usr/local/bin/docker login ${NEXUS_REPOSITORY} --username ${NEXUS_USERNAME} --password ${NEXUS_PASSWORD}"
+                    sh "/usr/local/bin/docker login ${NEXUS_REPOSITORY} --username admin --password Pravin@271299"
                     sh "/usr/local/bin/docker build -f home_credit_default_risk/Dockerfile -t ${DOCKER_IMAGE}:${VERSION} home_credit_default_risk"
                 }
             }
@@ -48,7 +48,7 @@ pipeline {
         stage('Push Docker Image to Nexus') {
             steps {
                 script {
-                    sh "/usr/local/bin/docker login ${NEXUS_REPOSITORY} --username ${NEXUS_USERNAME} --password ${NEXUS_PASSWORD}"
+                    sh "/usr/local/bin/docker login ${NEXUS_REPOSITORY} --username admin --password Pravin@271299"
                     sh "/usr/local/bin/docker docker push ${NEXUS_REPOSITORY}/${DOCKER_IMAGE}:${VERSION}"
                 }
             }
