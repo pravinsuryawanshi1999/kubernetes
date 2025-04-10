@@ -23,7 +23,7 @@ pipeline {
             steps {
                 script {
                     // Use the cloned repository as the build context
-                    sh " /usr/local/bin/docker docker build -f home_credit_default_risk/Dockerfile -t ${DOCKER_IMAGE}:${VERSION} home_credit_default_risk"
+                    sh " /usr/local/bin/docker docker build Dockerfile -t ${DOCKER_IMAGE}:${VERSION} home_credit_default_risk"
                 }
             }
         }
