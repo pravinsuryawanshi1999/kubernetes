@@ -32,7 +32,7 @@ pipeline {
             steps {
                 script {
                     
-                    sh "/usr/local/bin/docker docker build Dockerfile -t ${DOCKER_IMAGE}:${VERSION} ."
+                    sh "/usr/local/bin/docker build -f home_credit_default_risk/Dockerfile -t ${DOCKER_IMAGE}:${VERSION} home_credit_default_risk"
                 }
             }
         }
