@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = 'pravinsuryawanshi1999/home_credit_default_risk'
+        VERSION = "1.0.0.${BUILD_ID}"
+        NEXUS_REPOSITORY = 'localhost:8082'
+        NEXUS_USERNAME = credentials('nexus-username')
+        NEXUS_PASSWORD = credentials('nexus-password')
+    }
+
+    stages {
+        stage('Clone Repositories') {
+            steps {
+                script {
+                    // Clone the repository containing the Dockerfile and application code
+                    sh "git clone https://github.com/pravinsuryawanshi1999/home_credit_default_risk.git"
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Use the cloned repository as the build context
+                    sh "docker build -f home_credit_default_risk/Dockerfile -t ${DOCKER_IMAGE}:${VERSION} home_credit_default_risk"
+                }
+            }
+        }
+
+        stage('Tag Docker Image') {
+            steps {
+                script {
+                    sh "docker tag ${DOCKER_IMAGE}:${VERSION} ${NEXUS_REPOSITORY}/${DOCKER_IMAGE}:${VERSION}"
+                }
+            }
+        }
+
+        stage('Push Docker Image to Nexus') {
+            steps {
+                script {
+                    sh "docker login ${NEXUS_REPOSITORY} -u ${NEXUS_USERNAME} -p ${NEXUS_PASSWORD}"
+                    sh "docker push ${NEXUS_REPOSITORY}/${DOCKER_IMAGE}:${VERSION}"
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Docker image ${DOCKER_IMAGE}:${VERSION} successfully built, tagged, and pushed to Nexus."
+        }
+        failure {
+            echo 'Pipeline failed. Please check the logs for details.'
+        }
+    }
+}
+
