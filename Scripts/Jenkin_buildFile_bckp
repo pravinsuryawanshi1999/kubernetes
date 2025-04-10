@@ -10,15 +10,6 @@ pipeline {
     }
 
     stages {
-        stage('Clean Workspace') {
-            steps {
-                script {
-                    // Ensure workspace is cleaned up before cloning
-                    sh "rm -rf home_credit_default_risk || true"
-                }
-            }
-        }
-
         stage('Clone Repositories') {
             steps {
                 script {
@@ -31,8 +22,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Correct Docker build command
-                    sh "/usr/local/bin/docker build Dockerfile -t ${DOCKER_IMAGE}:${VERSION} ."
+                    // Use the cloned repository as the build context
+                    sh " /usr/local/bin/docker docker build Dockerfile -t ${DOCKER_IMAGE}:${VERSION} ."
                 }
             }
         }
