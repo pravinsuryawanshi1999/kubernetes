@@ -1,0 +1,4 @@
+apt update
+apt install -y curl
+curl http://10.244.3.6:80
+
