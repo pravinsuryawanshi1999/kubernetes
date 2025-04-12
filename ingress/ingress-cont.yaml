@@ -4,21 +4,11 @@ metadata:
   name: my-python-app-ingress
   namespace: default
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /docs
+    nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   ingressClassName: nginx
   rules:
-  - host: my-python-app.local
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: my-python-app-service
-            port:
-              number: 80
   - host: my-python-app-alt.local
     http:
       paths:
