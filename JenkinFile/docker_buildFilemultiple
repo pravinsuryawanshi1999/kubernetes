@@ -3,7 +3,7 @@ pipeline {
 
     parameters {
         choice(name: 'PROJECT_NAME', 
-               choices: ['home_credit_default_risk', 'my-app'], 
+               choices: ['home_credit_default_risk', 'my-apps'], 
                description: 'Select the project to build.')
     }
 
