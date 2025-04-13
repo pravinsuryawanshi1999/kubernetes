@@ -72,7 +72,7 @@ pipeline {
                 from: '', 
                 replyTo: '', 
                 subject: "Pipeline success: ${DOCKER_IMAGE}:${VERSION}", 
-                to: 'pravisuryawanshi1999@gmail.com'     
+                to: 'pravinsuryawanshi1999@gmail.com'     
         }
         failure {
             echo 'Pipeline failed. Please check the logs for details.'
@@ -82,7 +82,7 @@ pipeline {
                 from: '',
                 replyTo: '',
                 subject: "Pipeline failed: ${DOCKER_IMAGE}:${VERSION}",
-                to: 'pravisuryawanshi1999@gmail.com'
+                to: 'pravinsuryawanshi1999@gmail.com'
 
         }
     }
