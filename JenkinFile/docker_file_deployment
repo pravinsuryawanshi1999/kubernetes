@@ -2,12 +2,12 @@ pipeline {
     agent any
 
     environment {
-        FORCE_RECREATE_PODS = '1' // Set this to '0' if you don't want to force recreate pods
         CUSTOM_MS_LIST = 'Scripts/custom-ms-list.txt'
     }
 
     parameters {
-        string(name: 'MICROSERVICE_NAME', defaultValue: 'ALL', description: 'Name of the microservice to deploy. Use ALL to deploy all microservices listed in custom-ms-list.txt')
+        choice(name: 'FORCE_RECREATE_PODS', choices: ['0', '1'], description: 'Force recreate pods')
+        choice(name: 'MICROSERVICE_NAME', choices: ['my-python-app', 'my-java-app', 'my-node-app', 'ALL'], description: 'Name of the microservice to deploy. Use ALL to deploy all microservices listed in custom-ms-list.txt')
         string(name: 'deployment_name', defaultValue: '', description: 'Name of the deployment')
     }
 
@@ -25,17 +25,18 @@ pipeline {
             steps {
                 script {
                     def msName = params.MICROSERVICE_NAME
+                    def forceRecreate = params.FORCE_RECREATE_PODS
                     if (msName != 'ALL') {
                         echo "Deploying single microservice: ${msName}"
                         sh """
-                        export FORCE_RECREATE_PODS=${env.FORCE_RECREATE_PODS}
-                        ./Scripts/deploy-application.sh ${env.FORCE_RECREATE_PODS} ${msName}
+                        export FORCE_RECREATE_PODS=${forceRecreate}
+                        ./Scripts/deploy-application.sh ${forceRecreate} ${msName}
                         """
                     } else {
                         echo "Deploying all microservices listed in ${env.CUSTOM_MS_LIST}"
                         sh """
-                        export FORCE_RECREATE_PODS=${env.FORCE_RECREATE_PODS}
-                        ./Scripts/deploy-application.sh ${env.FORCE_RECREATE_PODS} ALL
+                        export FORCE_RECREATE_PODS=${forceRecreate}
+                        ./Scripts/deploy-application.sh ${forceRecreate} ALL
                         """
                     }
                 }
