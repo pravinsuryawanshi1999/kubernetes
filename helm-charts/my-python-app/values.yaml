@@ -1,0 +1,14 @@
+name: my-python-app
+replicaCount: 2
+image:
+  repository: localhost:8082/home_credit_default_risk
+  tag: 1.0.0.13
+resources:
+  limits:
+    memory: "6000Mi"
+    cpu: "5"
+service:
+  nodePort: 30080
+ingress:
+  host: my-python-app-alt.local
+
