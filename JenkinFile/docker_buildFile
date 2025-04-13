@@ -2,46 +2,61 @@ pipeline {
     agent any
 
     environment {
-        CUSTOM_MS_LIST = 'Scripts/custom-ms-list.txt'
-        NEXUS_URL = 'http://localhost:8082'
-    }
-
-    parameters {
-        choice(name: 'FORCE_RECREATE_PODS', choices: ['0', '1'], description: 'Force recreate pods')
-        choice(name: 'MICROSERVICE_NAME', choices: ['my-python-app', 'my-java-app', 'my-node-app', 'ALL'], description: 'Name of the microservice to deploy. Use ALL to deploy all microservices listed in custom-ms-list.txt')
-        choice(name: 'IMAGE_VERSION', choices: getImageVersions(), description: 'Version of the Docker image to deploy')
-        string(name: 'deployment_name', defaultValue: '', description: 'Name of the deployment')
+        DOCKER_IMAGE = 'home_credit_default_risk'
+        VERSION = "1.0.0.${BUILD_ID}"
+        NEXUS_REPOSITORY = 'localhost:8082'
     }
 
     stages {
-        stage('Checkout') {
+        stage('Clean Workspace') {
             steps {
                 script {
-                    // Checkout the code from your repository
-                    checkout scm
+                    sh "rm -rf home_credit_default_risk || true"
                 }
             }
         }
 
-        stage('Deploy Microservice') {
+        stage('Clone Repositories') {
             steps {
                 script {
-                    def msName = params.MICROSERVICE_NAME
-                    def forceRecreate = params.FORCE_RECREATE_PODS
-                    def imageVersion = params.IMAGE_VERSION
-                    if (msName != 'ALL') {
-                        echo "Deploying single microservice: ${msName} with image version: ${imageVersion}"
+                    sh "git clone https://github.com/pravinsuryawanshi1999/home_credit_default_risk.git"
+                }
+            }
+        }
+
+        stage('Login to Docker Registry') {
+            steps {
+                script {
+                    // Securely login to Docker registry using credentials
+                    withCredentials([usernamePassword(credentialsId: 'docker-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh """
-                        export FORCE_RECREATE_PODS=${forceRecreate}
-                        ./Scripts/deploy-application.sh ${forceRecreate} ${msName} ${imageVersion}
-                        """
-                    } else {
-                        echo "Deploying all microservices listed in ${env.CUSTOM_MS_LIST} with image version: ${imageVersion}"
-                        sh """
-                        export FORCE_RECREATE_PODS=${forceRecreate}
-                        ./Scripts/deploy-application.sh ${forceRecreate} ALL ${imageVersion}
+                         ./Scripts/docker-login.sh ${PASSWORD} ${NEXUS_REPOSITORY} ${USERNAME}
                         """
                     }
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh "/usr/local/bin/docker build -f home_credit_default_risk/Dockerfile -t ${DOCKER_IMAGE}:${VERSION} home_credit_default_risk"
+                }
+            }
+        }
+
+        stage('Tag Docker Image') {
+            steps {
+                script {
+                    sh "/usr/local/bin/docker tag ${DOCKER_IMAGE}:${VERSION} ${NEXUS_REPOSITORY}/${DOCKER_IMAGE}:${VERSION}"
+                }
+            }
+        }
+
+        stage('Push Docker Image to Nexus') {
+            steps {
+                script {
+                    sh "/usr/local/bin/docker --config /tmp/.docker   push ${NEXUS_REPOSITORY}/${DOCKER_IMAGE}:${VERSION}"
                 }
             }
         }
@@ -49,36 +64,27 @@ pipeline {
 
     post {
         success {
+            echo "Docker image ${DOCKER_IMAGE}:${VERSION} successfully built, tagged, and pushed to Nexus."
             echo "Pipeline completed successfully. Sending the notification"
             mail bcc: '', 
-                body: "Scaling down replicas for deployment ${params.deployment_name} was successful.", 
+                body: "Docker image ${DOCKER_IMAGE}:${VERSION} successfully built, tagged, and pushed to Nexus", 
                 cc: '', 
                 from: '', 
                 replyTo: '', 
-                subject: "Pipeline success: ${params.deployment_name}", 
-                to: 'pravinsuryawanshi1999@gmail.com'            
+                subject: "Pipeline success: ${DOCKER_IMAGE}:${VERSION}", 
+                to: 'pravinsuryawanshi1999@gmail.com'     
         }
         failure {
-            echo "Pipeline failed. Sending the notification"
-            mail bcc: '', 
-                body: "Scaling down replicas for deployment ${params.deployment_name} failed.", 
-                cc: '', 
-                from: '', 
-                replyTo: '', 
-                subject: "Pipeline failure: ${params.deployment_name}", 
-                to: 'pravinsuryawanshi1999@gmail.com'                     
+            echo 'Pipeline failed. Please check the logs for details.'
+            mail bcc: '',
+                body: "Docker image ${DOCKER_IMAGE}:${VERSION} failed to built, tagged, and pushed to Nexus",
+                cc: '',
+                from: '',
+                replyTo: '',
+                subject: "Pipeline failed: ${DOCKER_IMAGE}:${VERSION}",
+                to: 'pravinsuryawanshi1999@gmail.com'
+
         }
     }
-}
-
-def getImageVersions() {
-    def imageVersions = []
-    def msName = params.MICROSERVICE_NAME
-    def images = sh(script: "docker images | grep ${env.NEXUS_URL} | grep ${msName}", returnStdout: true).trim().split("\n")
-    images.each { image ->
-        def version = image.split()[1]
-        imageVersions.add(version)
-    }
-    return imageVersions
 }
 

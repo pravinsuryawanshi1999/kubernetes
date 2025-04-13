@@ -3,11 +3,14 @@ pipeline {
 
     environment {
         CUSTOM_MS_LIST = 'Scripts/custom-ms-list.txt'
+        NEXUS_URL = 'http://localhost:8082'
     }
 
     parameters {
         choice(name: 'FORCE_RECREATE_PODS', choices: ['0', '1'], description: 'Force recreate pods')
         choice(name: 'MICROSERVICE_NAME', choices: ['my-python-app', 'my-java-app', 'my-node-app', 'ALL'], description: 'Name of the microservice to deploy. Use ALL to deploy all microservices listed in custom-ms-list.txt')
+        choice(name: 'IMAGE_VERSION', choices: getImageVersions(), description: 'Version of the Docker image to deploy')
+        string(name: 'deployment_name', defaultValue: '', description: 'Name of the deployment')
     }
 
     stages {
@@ -25,17 +28,18 @@ pipeline {
                 script {
                     def msName = params.MICROSERVICE_NAME
                     def forceRecreate = params.FORCE_RECREATE_PODS
+                    def imageVersion = params.IMAGE_VERSION
                     if (msName != 'ALL') {
-                        echo "Deploying single microservice: ${msName}"
+                        echo "Deploying single microservice: ${msName} with image version: ${imageVersion}"
                         sh """
                         export FORCE_RECREATE_PODS=${forceRecreate}
-                        ./Scripts/deploy-application.sh ${forceRecreate} ${msName}
+                        ./Scripts/deploy-application.sh ${forceRecreate} ${msName} ${imageVersion}
                         """
                     } else {
-                        echo "Deploying all microservices listed in ${env.CUSTOM_MS_LIST}"
+                        echo "Deploying all microservices listed in ${env.CUSTOM_MS_LIST} with image version: ${imageVersion}"
                         sh """
                         export FORCE_RECREATE_PODS=${forceRecreate}
-                        ./Scripts/deploy-application.sh ${forceRecreate} ALL
+                        ./Scripts/deploy-application.sh ${forceRecreate} ALL ${imageVersion}
                         """
                     }
                 }
@@ -65,5 +69,16 @@ pipeline {
                 to: 'pravinsuryawanshi1999@gmail.com'                     
         }
     }
+}
+
+def getImageVersions() {
+    def imageVersions = []
+    def msName = params.MICROSERVICE_NAME
+    def images = sh(script: "docker images | grep ${env.NEXUS_URL} | grep ${msName}", returnStdout: true).trim().split("\n")
+    images.each { image ->
+        def version = image.split()[1]
+        imageVersions.add(version)
+    }
+    return imageVersions
 }
 
