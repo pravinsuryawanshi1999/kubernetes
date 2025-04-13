@@ -4,6 +4,7 @@ deploy_ms(){
     [[ -z $1 ]] && echo "provide microservice name" && return 1
     MS_NAME=$1
 
+    HELM_PATH="/opt/homebrew/bin/helm"
     HELM_PARAMS="upgrade -i --force ${MS_NAME} /Users/pravisur/Pravin/local/helm-charts/${MS_NAME} --set name=$MS_NAME --set image.repository=localhost:8082/$MS_NAME"
 
     if [[ $FORCE_RECREATE_PODS -eq 1 ]]; then
@@ -11,7 +12,7 @@ deploy_ms(){
     fi
 
     echo "Starting deployment of $MS_NAME with Helm: ${HELM_PARAMS}"
-    helm ${HELM_PARAMS}
+    ${HELM_PATH} ${HELM_PARAMS}
 
     if [[ $? -ne 0 ]]; then
         echo "ERROR - failed while deploying"
@@ -22,11 +23,10 @@ deploy_ms(){
 if [[ $# -lt 2 ]]; then
     echo "No of arguments provided to the script is less than required. Please check"
     exit 1
-fi 
+fi
 
 export FORCE_RECREATE_PODS=$1
-
-CUSTOM_MS_LIST="custom-ms-list.txt"
+CUSTOM_MS_LIST="Scripts/custom-ms-list.txt"
 
 echo "***CUSTOM_MS_LIST: ${CUSTOM_MS_LIST}***"
 
