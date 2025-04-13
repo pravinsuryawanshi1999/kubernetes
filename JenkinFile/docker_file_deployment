@@ -8,7 +8,6 @@ pipeline {
     parameters {
         choice(name: 'FORCE_RECREATE_PODS', choices: ['0', '1'], description: 'Force recreate pods')
         choice(name: 'MICROSERVICE_NAME', choices: ['my-python-app', 'my-java-app', 'my-node-app', 'ALL'], description: 'Name of the microservice to deploy. Use ALL to deploy all microservices listed in custom-ms-list.txt')
-        string(name: 'deployment_name', defaultValue: '', description: 'Name of the deployment')
     }
 
     stages {
