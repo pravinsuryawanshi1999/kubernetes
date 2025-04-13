@@ -30,7 +30,7 @@ pipeline {
                     // Securely login to Docker registry using credentials
                     withCredentials([usernamePassword(credentialsId: 'docker-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh """
-                        echo "${PASSWORD}" | /usr/local/bin/docker  docker login ${NEXUS_REPOSITORY} --username ${USERNAME} --password-stdin
+                        echo "${PASSWORD}" | /usr/local/bin/docker  docker login ${NEXUS_REPOSITORY} --password-stdin
                         """
                     }
                 }
