@@ -65,9 +65,25 @@ pipeline {
     post {
         success {
             echo "Docker image ${DOCKER_IMAGE}:${VERSION} successfully built, tagged, and pushed to Nexus."
+            echo "Pipeline completed successfully. Sending the notification"
+            mail bcc: '', 
+                body: "Docker image ${DOCKER_IMAGE}:${VERSION} successfully built, tagged, and pushed to Nexus", 
+                cc: '', 
+                from: '', 
+                replyTo: '', 
+                subject: "Pipeline success: ${DOCKER_IMAGE}:${VERSION}", 
+                to: 'pravisuryawanshi1999@gmail.com'     
         }
         failure {
             echo 'Pipeline failed. Please check the logs for details.'
+            mail bcc: '',
+                body: "Docker image ${DOCKER_IMAGE}:${VERSION} failed to built, tagged, and pushed to Nexus",
+                cc: '',
+                from: '',
+                replyTo: '',
+                subject: "Pipeline failed: ${DOCKER_IMAGE}:${VERSION}",
+                to: 'pravisuryawanshi1999@gmail.com'
+
         }
     }
 }
