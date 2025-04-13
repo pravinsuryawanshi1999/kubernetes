@@ -56,7 +56,7 @@ pipeline {
         stage('Push Docker Image to Nexus') {
             steps {
                 script {
-                    sh "/usr/local/bin/docker push ${NEXUS_REPOSITORY}/${DOCKER_IMAGE}:${VERSION}"
+                    sh "/usr/local/bin/docker --config /tmp/.docker   push ${NEXUS_REPOSITORY}/${DOCKER_IMAGE}:${VERSION}"
                 }
             }
         }
