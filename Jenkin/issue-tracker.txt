@@ -1,0 +1,13 @@
+
+500986607 59338 51284 0 2:58PM ttys003 0:00.08 kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller 8081:80 -- > 8081 -- nexus running 
+500986607 60209 51284 0 3:00PM ttys003 0:00.37 kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller 9090:80
+500986607 59097 51284 0 2:57PM ttys003 0:00.09 kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller 8080:80 -- > 8080 -- jenkin running  
+
+issue: jenkin and nexus url not able to access and jenkin porcess is proper up and running , nexus container is up and running still same issue and upon checking by using below command
+
+sudo lsof -i :8080
+
+get which port  traffic is forwarded , manually kill the process or exit from the session and after that it working fine .
+
+
+
