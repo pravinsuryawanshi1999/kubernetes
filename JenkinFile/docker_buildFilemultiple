@@ -1,0 +1,93 @@
+pipeline {
+    agent any
+
+    parameters {
+        choice(name: 'PROJECT_NAME', 
+               choices: ['home_credit_default_risk', 'my-app'], 
+               description: 'Select the project to build.')
+    }
+
+    environment {
+        DOCKER_IMAGE = "${params.PROJECT_NAME}"
+        VERSION = "1.0.0.${BUILD_ID}"
+        NEXUS_REPOSITORY = 'localhost:8082'
+    }
+
+    stages {
+        stage('Clean Workspace') {
+            steps {
+                script {
+                    sh "rm -rf ${params.PROJECT_NAME} || true"
+                }
+            }
+        }
+
+        stage('Clone Repositories') {
+            steps {
+                script {
+                    sh "git clone https://github.com/pravinsuryawanshi1999/${params.PROJECT_NAME}.git"
+                }
+            }
+        }
+
+        stage('Login to Docker Registry') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'docker-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        sh """
+                        ./Scripts/docker-login.sh ${PASSWORD} ${NEXUS_REPOSITORY} ${USERNAME}
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh "/usr/local/bin/docker build -f ${params.PROJECT_NAME}/Dockerfile -t ${DOCKER_IMAGE}:${VERSION} ${params.PROJECT_NAME}"
+                }
+            }
+        }
+
+        stage('Tag Docker Image') {
+            steps {
+                script {
+                    sh "/usr/local/bin/docker tag ${DOCKER_IMAGE}:${VERSION} ${NEXUS_REPOSITORY}/${DOCKER_IMAGE}:${VERSION}"
+                }
+            }
+        }
+
+        stage('Push Docker Image to Nexus') {
+            steps {
+                script {
+                    sh "/usr/local/bin/docker --config /tmp/.docker push ${NEXUS_REPOSITORY}/${DOCKER_IMAGE}:${VERSION}"
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Docker image ${DOCKER_IMAGE}:${VERSION} successfully built, tagged, and pushed to Nexus."
+            mail bcc: '', 
+                body: "Docker image ${DOCKER_IMAGE}:${VERSION} successfully built, tagged, and pushed to Nexus", 
+                cc: '', 
+                from: '', 
+                replyTo: '', 
+                subject: "Pipeline success: ${DOCKER_IMAGE}:${VERSION}", 
+                to: 'pravinsuryawanshi1999@gmail.com'     
+        }
+        failure {
+            echo 'Pipeline failed. Please check the logs for details.'
+            mail bcc: '',
+                body: "Docker image ${DOCKER_IMAGE}:${VERSION} failed to build, tag, and push to Nexus",
+                cc: '',
+                from: '',
+                replyTo: '',
+                subject: "Pipeline failed: ${DOCKER_IMAGE}:${VERSION}",
+                to: 'pravinsuryawanshi1999@gmail.com'
+        }
+    }
+}
+
