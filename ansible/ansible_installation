@@ -1,0 +1,68 @@
+Steps to Create Ansible Worker Nodes Using Docker Containers
+
+1.Create a Docker Network (for communication between containers):
+
+docker network create ansible-network --subnet 192.168.1.0/24
+
+2. Set Up the Ansible Control Node:
+
+docker run -d -it --name ansible-control --net ansible-network --hostname ansible-master ubuntu
+docker exec -it ansible-control /bin/bash
+apt update && apt install -y ansible openssh-client iputils-ping
+ssh-keygen  # Generate SSH keys for authentication
+
+
+3.Create Worker Nodes:
+docker run -d -it --name ansible-worker1 --net ansible-network --ip 192.168.1.18 --hostname worker1 ubuntu
+docker run -d -it --name ansible-worker2 --net ansible-network --ip 192.168.1.19 --hostname worker2 ubuntu
+
+
+4.Configure SSH on Worker Nodes:
+
+docker exec -it ansible-worker1 /bin/bash
+apt update && apt install -y openssh-server
+service ssh start
+exit
+
+docker exec -it ansible-worker2 /bin/bash
+apt update && apt install -y openssh-server
+service ssh start
+Exit
+
+
+5. Enable Passwordless SSH Authentication:
+
+• Copy the SSH public key from the control node (~/.ssh/id_rsa.pub) to the worker nodes (~/.ssh/authorized_keys).
+• Test SSH access:
+ssh root@worker1
+ssh root@worker2
+
+6. • Set Up Ansible Inventory (/etc/ansible/hosts):
+[workers]
+worker1 ansible_host=192.168.1.18 ansible_user=root
+worker2 ansible_host=192.168.1.19 ansible_user=root
+
+7. Test Connectivity:
+
+ansible all -m ping
+
+8. Bash installation inside the container
+
+apt update && apt install -y bash
+exec bash
+
+• Enable Command History (if still broken): Run this inside the container:
+
+export HISTFILE=/root/.bash_history
+export HISTSIZE=1000
+export HISTFILESIZE=2000
+
+9. Creating authorized_keys File
+If the file is missing, create it manually:
+
+mkdir -p ~/.ssh
+touch ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+
+
+

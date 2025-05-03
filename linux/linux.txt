@@ -1,0 +1,296 @@
+Exit Status Codes
+0: Indicates the command executed successfully.
+1: Indicates the command failed.
+
+Redirection
+ls -lrt /home/devops 1>lsout.log 2>lserror.log
+Meaning: Lists files in /home/devops directory, saving the output to lsout.log and errors to lserror.log.
+How it works: 1> redirects standard output, 2> redirects standard error.
+
+Java Version
+java -version 2>/dev/null | awk 'NR==1'
+
+Meaning: Displays the Java version, suppressing error messages.
+How it works: 2>/dev/null redirects errors to /dev/null, awk 'NR==1' prints the first line.
+
+java -version 2>&1
+
+Meaning: Displays the Java version along with any error messages.
+How it works: 2>&1 redirects standard error to standard output.
+
+Special Files and Variables
+/dev/null
+
+Meaning: A special file that discards all data written to it.
+How it works: Used to suppress unwanted output.
+
+NR
+
+Meaning: Represents the current line number in awk.
+How it works: Useful for processing specific lines.
+
+cut Command
+cut -d ':' -f1,3 demo.txt
+
+Meaning: Extracts fields 1 and 3 from demo.txt, using : as the delimiter.
+How it works: -d ':' sets the delimiter, -f1,3 specifies the fields.
+cat demo.txt | rev | cut -d ':' -f1 | rev
+
+Meaning: Extracts the last field from each line in demo.txt.
+How it works: rev reverses the line, cut -d ':' -f1 extracts the first field, rev reverses it back.
+
+awk Command
+id | awk -F '[=(]' '{print $2}'
+Meaning: Extracts the user ID from the id command output.
+How it works: -F '[=(]' sets the field separator to = or (, {print $2} prints the second field.
+
+Java Version Extraction with awk
+java -version 2>&1 | awk -F '"' 'NR==1 {print $2}'
+
+Meaning: Extracts the Java version number.
+How it works: -F '"' sets the field separator to ", NR==1 {print $2} prints the second field of the first line.
+
+java -version 2>&1 | awk -F '"' '/version/ {print $2}'
+
+Meaning: Extracts the Java version number.
+How it works: -F '"' sets the field separator to ", /version/ {print $2} prints the second field of lines containing "version".
+
+java -version 2>&1 | awk -F '"' '/version/ {print $NF}'
+
+Meaning: Extracts the release date.
+How it works: -F '"' sets the field separator to ", /version/ {print $NF} prints the last field of lines containing "version".
+
+java -version 2>&1 | awk -F '"' '/version/ '
+
+Meaning: Displays the entire version line.
+How it works: -F '"' sets the field separator to ", /version/ matches lines containing "version".
+
+grep Command Options
+-i: Ignore case differences.
+-w: Match whole words only.
+-v: Invert match (exclude matching lines).
+-n: Show line numbers.
+-c: Count matching lines.
+-B: Show lines before the match.
+-A: Show lines after the match.
+-C: Show lines around the match.
+-l: Show file names containing matches.
+-r: Search recursively in directories.
+-h: Hide file names in output.
+-o: Show only the matched part of lines.
+grep Examples
+
+ls -lrt | grep '^d'
+
+Meaning: Lists directories only.
+How it works: ^d matches lines starting with d (directory).
+
+ls -lrt | grep '^-'
+
+Meaning: Lists files only.
+How it works: ^- matches lines starting with - (file).
+
+ls -lrt | grep '^ansible'
+
+Meaning: Lists lines starting with ansible.
+How it works: ^ansible matches lines starting with ansible.
+
+ls -lrt | grep 'ansible$'
+
+Meaning: Lists lines ending with ansible.
+How it works: ansible$ matches lines ending with ansible.
+
+ls -lrt | grep 'py$'
+
+Meaning: Lists files ending with .py.
+How it works: py$ matches lines ending with .py.
+
+Java Version Extraction with grep
+java -version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1
+
+Meaning: Extracts the Java version number.
+How it works: -oE '[0-9]+\.[0-9]+\.[0-9]+' matches version numbers, head -1 shows the first match.
+
+java -version 2>&1 | grep -wE '[0-9]+\.[0-9]+\.[0-9]+' | head -1
+
+Meaning: Extracts the Java version number.
+How it works: -wE '[0-9]+\.[0-9]+\.[0-9]+' matches whole version numbers, head -1 shows the first match.
+
+sed Command
+sed '' id_ed25519
+
+Meaning: Displays the content of id_ed25519.
+How it works: Acts like cat.
+
+sed -i.oldfile 's/bash/sh/g' newfile
+
+Meaning: Replaces bash with sh in newfile, creating a backup as oldfile.
+How it works: -i.oldfile creates a backup, s/bash/sh/g performs the replacement globally.
+
+sed 's|bash|sh|g' newfile
+
+Meaning: Replaces bash with sh in newfile.
+How it works: Uses | as the delimiter.
+
+sed 's/\/bin\/bash/\/usr\/bin\/bash/g' file_name
+
+Meaning: Replaces /bin/bash with /usr/bin/bash in file_name.
+How it works: Uses \ to escape /.
+
+sed 's|/bin/bash|/usr/bin/bash|g' file_name
+
+Meaning: Replaces /bin/bash with /usr/bin/bash in file_name.
+How it works: Uses | as the delimiter.
+
+sed "s/${oldstr}/${newstr}/g" filename
+
+Meaning: Replaces ${oldstr} with ${newstr} in filename.
+How it works: Uses variables for replacement.
+
+
+
+
+sed -i 's/pravin/surya/Ig' yourfile.txt
+
+Explanation:
+-i: Edit the file in place.
+s/pravin/surya/Ig:
+s: Substitute command.
+pravin: The pattern to search for.
+surya: The replacement string.
+I: Ignore case.
+g: Replace all occurrences in each line.
+This command will replace all variations of "pravin" (regardless of case) with "surya" in yourfile.txt.
+
+
+
+
+tr Command
+
+Command 1: Listing Process IDs
+
+ps -ef | grep -i rest | grep -v grep | awk '{print $2}' | tr '\n' ' '
+
+
+Meaning: Lists the process IDs of all running processes that include the term "rest" in their name, displaying them in a single line.
+
+How it works:
+
+ps -ef: Lists all running processes.
+grep -i rest: Filters the list to include only processes with "rest" in their name, ignoring case.
+grep -v grep: Excludes the grep command itself from the results.
+awk '{print $2}': Extracts the second column, which is the process ID.
+tr '\n' ' ': Replaces newline characters with spaces, so all process IDs are displayed in a single line.
+
+Command 2: Extracting Java Version
+
+java -version 2>&1 | head -1 | cut -d ' ' -f3 | tr -d '"'
+
+Meaning: Extracts the Java version number from the java -version output.
+
+How it works:
+
+java -version 2>&1: Displays the Java version along with any error messages.
+head -1: Takes the first line of the output.
+cut -d ' ' -f3: Extracts the third field, using space as the delimiter.
+tr -d '"': Removes any double quotes from the extracted version number.
+
+Command 3: Listing Process IDs with Simplified Spaces
+
+ps -ef | grep -i rest | grep -v grep | tr -s ' ' | cut -d ' ' -f2
+
+Meaning: Lists the process IDs of all running processes that include the term "rest" in their name, ensuring that spaces are simplified.
+
+How it works:
+
+ps -ef: Lists all running processes.
+grep -i rest: Filters the list to include only processes with "rest" in their name, ignoring case.
+grep -v grep: Excludes the grep command itself from the results.
+tr -s ' ': Squeezes multiple spaces into a single space.
+cut -d ' ' -f2: Extracts the second field, which is the process ID.
+
+
+The echo -e command in Unix/Linux is used to enable interpretation of backslash escapes.
+ This means that special characters like \n (newline), \t (tab), and others will be processed and displayed accordingly.
+
+
+The <<< operator in shell scripting is known as a "here string." It allows you to pass a string directly to a command's standard input.
+grep "pattern" <<< "This is a test string"
+
+In shell scripting, the scale variable in bc (an arbitrary precision calculator language) is used to set the number of decimal places for calculations.
+echo "scale=2; 5/3" | bc
+
+
+
+test Command :
+
+The test command is a utility in Unix-like operating systems used to evaluate conditional expressions. It is commonly used in shell scripts to perform checks and make decisions based on the results. 
+
+Basic Syntax
+test EXPRESSION
+
+[ EXPRESSION ] (alternative form)
+eg. test -f file name it can be write in [[ -f file ]]
+
+Common Uses
+
+File Checks
+test -e filename: Check if the file exists.
+test -f filename: Check if the file is a regular file.
+test -d dirname: Check if the directory exists.
+test -r filename: Check if the file has read permission.
+test -w filename: Check if the file has write permission.
+test -x filename: Check if the file has execute permission.
+test -s filename: Check if the file is not empty.
+
+String Comparisons
+test -z string: Check if the string is empty.
+test -n string: Check if the string is not empty.
+test string1 = string2: Check if the strings are equal.
+
+Integer Comparisons
+test num1 -eq num2: Check if the numbers are equal.
+
+
+The || operator in Unix-like operating systems is used to execute the second command only if the first command fails. 
+
+The && operator in Unix-like operating systems is used to execute the second command only if the first command succeeds. 
+
+Finding Installed Path of a Package
+
+command -v docker
+Usage: command -v docker
+Purpose: Displays the path of the docker executable if it is installed.
+
+which docker
+Usage: which docker
+Purpose: Shows the path of the docker executable.
+
+Shell Options
+
+set -n
+Usage: set -n
+Purpose: Enables syntax checking mode. Commands are read but not executed.
+
+set -v
+Usage: set -v
+Purpose: Enables verbose mode. Displays shell input lines as they are read.
+
+set -x
+Usage: set -x
+Purpose: Enables debugging mode. Displays each command and its arguments as they are executed.
+
+set -u
+Usage: set -u
+Purpose: Treats unset variables as an error when substituting.
+
+
+curl -s -X GET -w "%{http_code}":
+
+-s: Silent mode (no progress info).
+
+-X GET: HTTP GET method.
+
+-w "%{http_code}": Displays the HTTP status code after the request (e.g., 200).
+
+%F in date: Displays the date in the format YYYY-MM-DD (e.g., 2025-04-27).

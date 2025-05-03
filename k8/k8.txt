@@ -1,0 +1,14 @@
+1.  kubectl create deployment nginx-pod --image=nginx:alpine
+2.  kubectl run nginx-pod --image=nginx:alpine
+3.  kubectl run redis --image=redis:alpine --labels="tier=db"
+4.  kubectl expose pod redis --port=6379 --name=redis-service
+5.  kubectl create deployment webapp --image=kodekloud/webapp-color --replicas=3
+6.  kubectl run custom-nginx --image=nginx --port=8080
+7.  kubectl create namespace dev-ns
+8.  kubectl create cm webapp-config-map --from-literal=APP_COLOR=darkblue --from-literal=APP_OTHER=disregard
+9.  kubectl create secret generic  db-secret --from-literal=DB_host=sql01 --from-literal=DB_User=root --from-literal=DB_Password=password123
+10. kubectl create token dashboard-sa || kubectl create sa dashboard-sa
+11. kubectl taint node node01 spray=mortien:NoSchedule  
+12. kubectl taint node controlplane node-role.kubernetes.io/control-plane:NoSchedule-
+13. kubectl label node node01 color=blue
+14. kubectl config --kubeconfig=/root/my-kube-config use-context research  
