@@ -294,3 +294,7 @@ curl -s -X GET -w "%{http_code}":
 -w "%{http_code}": Displays the HTTP status code after the request (e.g., 200).
 
 %F in date: Displays the date in the format YYYY-MM-DD (e.g., 2025-04-27).
+
+${#variable} --> give string lenght
+
+

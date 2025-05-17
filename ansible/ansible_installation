@@ -65,4 +65,17 @@ touch ~/.ssh/authorized_keys
 chmod 600 ~/.ssh/authorized_keys
 
 
+10. sevice ssh get down if container stop
+
+echo '#!/bin/bash' > /root/startup.sh
+echo 'service ssh start' >> /root/startup.sh
+chmod +x /root/startup.sh
+
+
+docker exec -it ansible-worker1 bash -c "echo '/root/startup.sh' >> ~/.bashrc"
+docker exec -it ansible-worker2 bash -c "echo '/root/startup.sh' >> ~/.bashrc"
+
+
+
+
 

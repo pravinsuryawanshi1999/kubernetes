@@ -1,0 +1,24 @@
+1. ansible all -m ansible.builtin.command -a 'uptime'
+2. ansible all -m ping
+3. ansible worker1 -m ansible.builtin.command -a 'free -mh'
+4. ansible worker1 -m ansible.builtin.shell -a 'free -mh'
+5. ansible-doc ansible.builtin.file
+6. ansible all -m file -a "path=/tmp/tests mode='0775' state=touch" 
+7. ansible all -m command -a 'ls -lrt /tmp'
+8. ansible all -m file -a "path=/tmp/test state=absent"
+9. ansible all -m file -a "path=/tmp/test state=directory "
+10.ansible all -m stat -a "path=/tmp/test"
+11.ansible all -m copy -a "src=/etc/ansible/text dest=/tmp/ mode='0644' backup=yes"
+12.ansible all -m copy -a "src=/etc/ansible/text dest=/tmp/ mode='0644' backup=yes"
+13.ansible all -m lineinfile -a "path=/tmp/text line='hello pravin'"
+14.ansible all -m lineinfile -a "path=/tmp/text line='hello sharvi' insertafter='hello' firstmatch=yes"
+15.ansible all -m lineinfile -a "path=/tmp/text regex='hello sharvi' state=absent"
+16.ansible all -m lineinfile -a "path=/tmp/text line='hello pravin' regex='hello sharvi'"
+17.ansible all -m fetch -a "src=/tmp/text dest=/etc/ansible/demo"
+18.ansible worker1 -m yum -a "name=nginx state=present" -b
+19.ansible worker1 -m apt -a "name=nginx state=present" -b
+20.ansible localhost -m ping
+21.ansible all -m ping --ask-pass -u root | assk-pass we can use k 
+22.ansible-playbook local.yml --syntax-check
+23.ansible-playbook -vv command.yml -e "targets=localhost" -e 'inputcommand="ansible --version"'
+24.ansible-playbook packagemanager.yml -e '{"reqPkg":{"yum":"httpd", "apt":"apache2"}}'

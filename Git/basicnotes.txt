@@ -1,0 +1,209 @@
+pravisur@pravisur01-mac ~ % cd RHSCA 
+
+pravisur@pravisur01-mac RHSCA % ls -lrt
+total 24
+-rw-r--r--@ 1 pravisur  NTNET\Domain Users  9259 Apr 25 22:16 linux.txt
+pravisur@pravisur01-mac RHSCA % git init fresh-project
+Initialized empty Git repository in /Users/pravisur/RHSCA/fresh-project/.git/
+
+pravisur@pravisur01-mac RHSCA % ls -lrt
+total 24
+-rw-r--r--@ 1 pravisur  NTNET\Domain Users  9259 Apr 25 22:16 linux.txt
+drwxr-xr-x  3 pravisur  NTNET\Domain Users    96 May  7 21:31 fresh-project
+
+pravisur@pravisur01-mac RHSCA % cd fresh-project 
+pravisur@pravisur01-mac fresh-project % ls -lrt
+total 0
+
+pravisur@pravisur01-mac fresh-project % ls -lrta
+total 0
+drwxr-xr-x  4 pravisur  NTNET\Domain Users  128 May  7 21:31 ..
+drwxr-xr-x  3 pravisur  NTNET\Domain Users   96 May  7 21:31 .
+drwxr-xr-x  9 pravisur  NTNET\Domain Users  288 May  7 21:31 .git
+
+
+
+pravisur@pravisur01-mac fresh-project % git branch -m master main
+
+
+pravisur@pravisur01-mac fresh-project % git status               
+On branch main
+
+No commits yet
+
+nothing to commit (create/copy files and use "git add" to track)
+
+
+pravisur@pravisur01-mac fresh-project % git branch -m master     
+pravisur@pravisur01-mac fresh-project % git status          
+On branch master
+
+No commits yet
+
+nothing to commit (create/copy files and use "git add" to track)
+
+pravisur@pravisur01-mac fresh-project % cp ../linux.txt .
+
+pravisur@pravisur01-mac fresh-project % git status
+On branch master
+
+No commits yet
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	linux.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+pravisur@pravisur01-mac fresh-project % git add linux.txt 
+
+pravisur@pravisur01-mac fresh-project % git status       
+On branch master
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+	new file:   linux.txt
+
+
+pravisur@pravisur01-mac fresh-project % git rm --cached linux.txt
+rm 'linux.txt'
+pravisur@pravisur01-mac fresh-project % git status               
+On branch master
+
+No commits yet
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	linux.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+pravisur@pravisur01-mac ansible % git ls-files 
+linux.txt
+
+
+git commit -am "comment" --> not need to add command it will do both
+
+
+----
+pravisur@pravisur01-mac ansible % vi linux.txt 
+pravisur@pravisur01-mac ansible % git status  
+On branch main
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   linux.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+pravisur@pravisur01-mac ansible % git restore linux.txt 
+pravisur@pravisur01-mac ansible % git status           
+On branch main
+nothing to commit, working tree clean
+
+
+
+pravisur@pravisur01-mac ansible % git show
+commit a13b95a260d17257a6d865d72c9c4f392683dbb4 (HEAD -> main)
+Author: Pravin Suryawanshi <pravinsuryawanshi1999@gmail.com>
+Date:   Mon May 12 07:44:01 2025 +0530
+
+    linux notes
+
+diff --git a/linux.txt b/linux.txt
+index 587f275..44deb2b 100644
+--- a/linux.txt
++++ b/linux.txt
+@@ -1,3 +1,4 @@
++
+ Exit Status Codes
+ 0: Indicates the command executed successfully.
+ 1: Indicates the command failed.
+
+
+----
+
+pravisur@pravisur01-mac ansible % git mv linux.txt linuxs.txt
+pravisur@pravisur01-mac ansible % git status
+On branch main
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	renamed:    linux.txt -> linuxs.txt
+
+
+----
+
+git add -u : If you create a new file that Git hasn't tracked yet, git add -u will not stage it. You need to use git add . or git add <filename> for new files.
+
+----
+
+git rm <file_name>
+
+pravisur@pravisur01-mac ansible % git rm linux.txt 
+rm 'linux.txt'
+pravisur@pravisur01-mac ansible % git status      
+On branch main
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	deleted:    linux.txt
+
+pravisur@pravisur01-mac ansible % git restore --staged linux.txt  
+pravisur@pravisur01-mac ansible % git status                    
+On branch main
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	deleted:    linux.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+pravisur@pravisur01-mac ansible % ls -lrt               
+total 24
+-rw-r--r--  1 pravisur  1815495230  9260 May 12 08:03 linuxs.txt
+pravisur@pravisur01-mac ansible % git restore  linux.txt 
+pravisur@pravisur01-mac ansible % ls -lrt               
+total 48
+
+pravisur@pravisur01-mac ansible % rm linux.txt 
+pravisur@pravisur01-mac ansible % git status            
+On branch main
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	deleted:    linux.txt
+
+
+pravisur@pravisur01-mac ansible % git restore linux.txt 
+pravisur@pravisur01-mac ansible % git status           
+On branch main
+nothing to commit, working tree clean
+pravisur@pravisur01-mac ansible % 
+
+----
+
+pravisur@pravisur01-mac Git % git log --oneline --graph
+* 8cf005e (HEAD -> main, origin/main) new notes
+* 4b689ba modify jenkin file adding the image version selection parameter
+* 27f8b3a modify jenkin file adding the image version selection parameter
+* d20b752 modify the deploy-application helm command not work:
+* 5788238 modify the deployment jenkin file
+* eaeaa1a deployment jenkin file and script configuration
+* 350e770 my-apps repo created
+* b0735ca modify the docker file for all multiple option
+* 322607b added mail function in Jenkin docker_buildFile
+* 31b1e54 added mail function in Jenkin docker_buildFile
+* 981a692 docker build jenkin file modified
+
+
+----
+
+pravisur@pravisur01-mac Git % git log
+commit 8cf005eccfa29a03116cc189e87c2753aadb56de (HEAD -> main, origin/main)
+Author: Pravin Suryawanshi <pravinsuryawanshi1999@gmail.com>
+Date:   Sat May 3 13:55:45 2025 +0530
+
+    new notes
+
+----
+
+
