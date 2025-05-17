@@ -87,7 +87,7 @@ linux.txt
 git commit -am "comment" --> not need to add command it will do both
 
 
-----
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 pravisur@pravisur01-mac ansible % vi linux.txt 
 pravisur@pravisur01-mac ansible % git status  
 On branch main
@@ -116,13 +116,13 @@ index 587f275..44deb2b 100644
 --- a/linux.txt
 +++ b/linux.txt
 @@ -1,3 +1,4 @@
-+
+status+
  Exit Status Codes
  0: Indicates the command executed successfully.
  1: Indicates the command failed.
 
 
-----
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 pravisur@pravisur01-mac ansible % git mv linux.txt linuxs.txt
 pravisur@pravisur01-mac ansible % git status
@@ -132,11 +132,11 @@ Changes to be committed:
 	renamed:    linux.txt -> linuxs.txt
 
 
-----
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 git add -u : If you create a new file that Git hasn't tracked yet, git add -u will not stage it. You need to use git add . or git add <filename> for new files.
 
-----
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 git rm <file_name>
 
@@ -179,7 +179,7 @@ On branch main
 nothing to commit, working tree clean
 pravisur@pravisur01-mac ansible % 
 
-----
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 pravisur@pravisur01-mac Git % git log --oneline --graph
 * 8cf005e (HEAD -> main, origin/main) new notes
@@ -204,6 +204,106 @@ Date:   Sat May 3 13:55:45 2025 +0530
 
     new notes
 
-----
+------------------------------------------------------------------------------------------------------------------------
 
+stash:
+
+git stash push -m "saving changes"
+
+pravisur@pravisur01-mac argocd % git stash list                                 
+stash@{0}: On main: saving changes
+pravisur@pravisur01-mac argocd % 
+
+pravisur@pravisur01-mac argocd % git stash show stash@{0}                       
+ argocd/manifest | 1 +
+ 1 file changed, 1 insertion(+)
+pravisur@pravisur01-mac argocd % 
+
+
+pravisur@pravisur01-mac argocd % git stash apply
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	new file:   manifest
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+
+pravisur@pravisur01-mac argocd % git stash list
+
+stash@{0}: On main: saving changes
+pravisur@pravisur01-mac argocd % 
+pravisur@pravisur01-mac argocd % 
+pravisur@pravisur01-mac argocd % git stash drop stash@{0}
+
+Dropped stash@{0} (1a58d4632441993594e4d440027eb39ae3b5304d)
+pravisur@pravisur01-mac argocd % 
+
+
+
+pravisur@pravisur01-mac Git % git status
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	new file:   ../argocd/manifest
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   basicnotes.txt
+
+pravisur@pravisur01-mac Git % git stash -u 
+Saved working directory and index state WIP on main: 4a66a19 notes
+pravisur@pravisur01-mac Git % git status   
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+pravisur@pravisur01-mac Git % git stash list
+stash@{0}: WIP on main: 4a66a19 notes
+pravisur@pravisur01-mac Git % 
+
+
+branch:
+
+pravisur@pravisur01-mac argocd % git status       
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	new file:   manifest
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   ../Git/basicnotes.txt
+
+
+
+pravisur@pravisur01-mac argocd % git stash branch pravins 
+M	Git/basicnotes.txt
+A	argocd/manifest
+Switched to a new branch 'pravins'
+error: Your local changes to the following files would be overwritten by merge:
+	Git/basicnotes.txt
+Please commit your changes or stash them before you merge.
+Aborting
+Index was not unstashed.
+On branch pravins
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	new file:   manifest
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   ../Git/basicnotes.txt
+
+---------------------------------------------------------------------------------------------------------------------------------
 
