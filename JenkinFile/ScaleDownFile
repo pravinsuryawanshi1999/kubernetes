@@ -1,0 +1,74 @@
+pipeline {
+    agent any
+
+    parameters {
+        choice(name: 'Environment', choices: ['Prod'], description: 'Select environment type')
+        choice(name: 'Namespace', choices: ['optima', 'optima-selfcare'], description: 'Select namespace')
+        choice(name: 'Applications', choices: ['app1', 'app2', 'app3'], description: 'Select applications to restart')
+    }
+
+    stages {
+        stage('Prepare Workspace') {
+            steps {
+                deleteDir()
+            }
+        }
+
+        stage('Checkout Source') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Check Running Pods') {
+            steps {
+                script {
+                    def namespace = params.Namespace
+                    def appName = params.Applications
+
+                    sh """
+                        chmod +x scripts/checkRunningPods.sh
+                        ./scripts/checkRunningPods.sh ${namespace} ${appName}
+                    """
+                }
+            }
+        }
+
+        stage('Scale Down Application') {
+            steps {
+                script {
+                    def namespace = params.Namespace
+                    def appName = params.Applications
+
+                    sh """
+                        chmod +x scripts/scaleDown.sh
+                        ./scripts/scaleDown.sh ${namespace} ${appName}
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            mail bcc: '',
+                body: "Microservice scale-down completed successfully for ${params.Applications} in ${params.Namespace}.",
+                cc: '',
+                from: '',
+                replyTo: '',
+                subject: "Success: Microservice Scale-Down | ${params.Applications} | ${params.Namespace}",
+                to: 'pravinsuryawanshi1999@gmail.com'
+        }
+        failure {
+            echo "Pipeline failed. Sending the notification"
+            mail bcc: '',
+                body: "Microservice scale-down failed for ${params.Applications} in ${params.Namespace}.",
+                cc: '',
+                from: '',
+                replyTo: '',
+                subject: "Failure: Microservice Scale-Down | ${params.Applications} | ${params.Namespace}",
+                to: 'pravinsuryawanshi1999@gmail.com'
+        }
+    }
+}
+

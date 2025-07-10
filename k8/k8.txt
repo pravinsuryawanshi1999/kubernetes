@@ -11,4 +11,5 @@
 11. kubectl taint node node01 spray=mortien:NoSchedule  
 12. kubectl taint node controlplane node-role.kubernetes.io/control-plane:NoSchedule-
 13. kubectl label node node01 color=blue
-14. kubectl config --kubeconfig=/root/my-kube-config use-context research  
+14. kubectl config --kubeconfig=/root/my-kube-config use-context research 
+15. kubectl delete pod --all -n namespace 
